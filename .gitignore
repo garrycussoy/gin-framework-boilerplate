@@ -1,0 +1,4 @@
+vendor/*
+!vendor/modules.txt
+
+go-rest-boilerplate.out
