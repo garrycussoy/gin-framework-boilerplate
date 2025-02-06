@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,5 +12,5 @@ func NewGeneralHandler() GeneralHandler {
 
 // A handler for general health-check
 func (generalH GeneralHandler) HealthCheck(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, "Ok!")
+	SuccessResponse(ctx, nil)
 }
