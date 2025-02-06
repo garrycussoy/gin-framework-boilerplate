@@ -12,8 +12,9 @@ import (
 
 	"gin-framework-boilerplate/internal/config"
 	"gin-framework-boilerplate/internal/constants"
+
 	// "gin-framework-boilerplate/internal/http/middlewares"
-	// "gin-framework-boilerplate/internal/http/routes"
+	"gin-framework-boilerplate/internal/http/routes"
 	// "gin-framework-boilerplate/internal/utils"
 	// "gin-framework-boilerplate/pkg/jwt"
 	"gin-framework-boilerplate/pkg/logger"
@@ -54,14 +55,9 @@ func NewApp() (*App, error) {
 	// Timeout middleware
 	// timeoutMiddleware := middlewares.NewTimeoutMiddleware()
 
-	// Define clients service
-	// omnicareClient := OmnicareAdapters.NewOmnicareClient(httpClient)
-	// wiproClient := WiproAdapters.NewWiproClient(httpClient)
-
-	// API Routes
-	// api := router.Group("api")
-	// api.GET("/health", routes.HealthCheckHandler)
-	// routes.NewUsersRoute(api, conn, jwtService, authMiddleware, timeoutMiddleware, emailNotificationService).Routes()
+	// API routes
+	api := router.Group("api")
+	routes.NewGeneralsRoute(api).Routes()
 	// routes.NewPatientsRoute(api, conn, authMiddleware, timeoutMiddleware, wiproClient, omnicareClient).Routes()
 	// routes.NewAppointmentRoute(api, conn, authMiddleware, timeoutMiddleware, omnicareClient, wiproClient).Routes()
 	// routes.NewMasterDataRoute(api, conn, authMiddleware, timeoutMiddleware, omnicareClient, wiproClient).Routes()
@@ -98,7 +94,7 @@ func (a *App) Run() (err error) {
 	<-quit
 	logger.Info("shutdown server ...", logrus.Fields{constants.LoggerCategory: constants.LoggerCategoryServer})
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := a.HttpServer.Shutdown(ctx); err != nil {
