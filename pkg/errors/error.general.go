@@ -1,29 +1,11 @@
-package akasia_errors
+// This package provides defined custom errors used accross the code
+package custom_errors
 
-// func ValidationFailed(detail string) AkasiaError {
-// 	return CreateAkasiaError(400, "0001", "Payload validation failed", detail)
-// }
+// ===== Incoming-request-related error =====
+func AuthorizationFailed(detail string) CustomError {
+	return CreateCustomError(401, "0001", "Authorization failed", detail)
+}
 
-// func AuthorizationFailed(detail string) AkasiaError {
-// 	return CreateAkasiaError(401, "0002", "Authorization failed", detail)
-// }
-
-// func DomainError(detail string) AkasiaError {
-// 	return CreateAkasiaError(200, "0003", "Domain error", detail)
-// }
-
-// func NotificationError(detail string) AkasiaError {
-// 	return CreateAkasiaError(200, "0004", "Notification error", detail)
-// }
-
-// func RepositoryError(detail string) AkasiaError {
-// 	return CreateAkasiaError(200, "0005", "Repository error", detail)
-// }
-
-// func HelperError(detail string) AkasiaError {
-// 	return CreateAkasiaError(200, "0006", "Helper error", detail)
-// }
-
-// func TimeoutError() AkasiaError {
-// 	return CreateAkasiaError(408, "0007", "Request timed out", nil)
-// }
+func ValidationFailed(detail string) CustomError {
+	return CreateCustomError(400, "0002", "Payload validation failed", detail)
+}
