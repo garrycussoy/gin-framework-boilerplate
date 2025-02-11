@@ -123,9 +123,9 @@ func setupRouter() *gin.Engine {
 
 	// Set up middlewares
 	// router.Use(middlewares.CORSMiddleware())
-	// router.Use(gin.LoggerWithFormatter(logger.HTTPLogger))
-	// router.Use(logger.RequestLogger())
-	router.Use(gin.Recovery())
+	router.Use(gin.LoggerWithFormatter(logger.HTTPLogger)) // Log some basic data of incoming HTTP request
+	router.Use(logger.PayloadRequestLogger())              // Log incoming HTTP request payload
+	router.Use(gin.Recovery())                             // Recover any panic
 
 	return router
 }
