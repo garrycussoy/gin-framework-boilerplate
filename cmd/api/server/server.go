@@ -13,8 +13,9 @@ import (
 	"gin-framework-boilerplate/internal/config"
 	"gin-framework-boilerplate/internal/constants"
 
-	// "gin-framework-boilerplate/internal/http/middlewares"
+	"gin-framework-boilerplate/internal/http/middlewares"
 	"gin-framework-boilerplate/internal/http/routes"
+
 	// "gin-framework-boilerplate/internal/utils"
 	// "gin-framework-boilerplate/pkg/jwt"
 	"gin-framework-boilerplate/pkg/logger"
@@ -123,6 +124,7 @@ func setupRouter() *gin.Engine {
 
 	// Set up middlewares
 	// router.Use(middlewares.CORSMiddleware())
+	router.Use(middlewares.CorrelationIdMiddleware())      // Setup Correlation-ID
 	router.Use(gin.LoggerWithFormatter(logger.HTTPLogger)) // Log some basic data of incoming HTTP request
 	router.Use(logger.PayloadRequestLogger())              // Log incoming HTTP request payload
 	router.Use(gin.Recovery())                             // Recover any panic

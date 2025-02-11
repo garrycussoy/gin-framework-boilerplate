@@ -40,7 +40,7 @@ func HTTPLogger(param gin.LogFormatterParams) string {
 	}
 
 	// Formatting the log
-	var logFormat = fmt.Sprintf("%s \033[%sm %d \033[0m %s %s %d %s %s %s\n",
+	var logFormat = fmt.Sprintf("%s \033[%sm %d \033[0m %s %s %d %s %s %s CorrelationID: %s\n",
 		constants.HTTPLogging,
 		color,
 		param.StatusCode,
@@ -50,6 +50,7 @@ func HTTPLogger(param gin.LogFormatterParams) string {
 		param.ClientIP,
 		param.ErrorMessage,
 		param.Request.UserAgent(),
+		param.Keys["CorrelationID"],
 	)
 
 	// Output the log
@@ -71,19 +72,21 @@ func PayloadRequestLogger() gin.HandlerFunc {
 			bodyRequest, err := ReadBody(rdr1)
 			if err != nil {
 				// For debugging puprose only
-				logFormat := fmt.Sprintf("%s Error while marshalling body request for %s %s. Detail: %s\n",
+				logFormat := fmt.Sprintf("%s Error while marshalling body request for %s %s. Detail: %s. CorrelationId: %s\n",
 					constants.HTTPLogging,
 					c.Request.Method,
 					c.Request.URL.Path,
 					err.Error(),
+					c.GetString("CorrelationID"),
 				)
 				Debug(logFormat, logrus.Fields{constants.LoggerCategory: constants.LoggerCategoryHTTP})
 			} else {
-				logFormat := fmt.Sprintf("%s %s %s BodyRequest: %v\n",
+				logFormat := fmt.Sprintf("%s %s %s BodyRequest: %v. CorrelationId: %s\n",
 					constants.HTTPLogging,
 					c.Request.Method,
 					c.Request.URL.Path,
 					bodyRequest,
+					c.GetString("CorrelationID"),
 				)
 				Info(logFormat, logrus.Fields{constants.LoggerCategory: constants.LoggerCategoryHTTP})
 			}
