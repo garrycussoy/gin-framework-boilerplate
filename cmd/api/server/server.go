@@ -16,7 +16,7 @@ import (
 	"gin-framework-boilerplate/internal/http/middlewares"
 	"gin-framework-boilerplate/internal/http/routes"
 
-	// "gin-framework-boilerplate/internal/utils"
+	"gin-framework-boilerplate/internal/adapters/repository/postgresql"
 	// "gin-framework-boilerplate/pkg/jwt"
 	"gin-framework-boilerplate/pkg/logger"
 	// "gin-framework-boilerplate/pkg/notifications"
@@ -31,11 +31,11 @@ type App struct {
 }
 
 func NewApp() (*App, error) {
-	// Setup databases
-	// conn, err := utils.SetupPostgresConnection()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	// Setup database connection
+	_, err := postgresql.SetupPostgresqlConnection()
+	if err != nil {
+		return nil, err
+	}
 
 	// Setup router
 	router := setupRouter()
@@ -123,7 +123,7 @@ func setupRouter() *gin.Engine {
 	router := gin.New()
 
 	// Set up middlewares
-	// router.Use(middlewares.CORSMiddleware())
+	router.Use(middlewares.CORSMiddleware())               // Setup CORS
 	router.Use(middlewares.CorrelationIdMiddleware())      // Setup Correlation-ID
 	router.Use(gin.LoggerWithFormatter(logger.HTTPLogger)) // Log some basic data of incoming HTTP request
 	router.Use(logger.PayloadRequestLogger())              // Log incoming HTTP request payload

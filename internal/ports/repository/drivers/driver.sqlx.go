@@ -5,9 +5,9 @@ import (
 	"os"
 	"time"
 
+	"database/sql"
 	"gin-framework-boilerplate/internal/constants"
 	"gin-framework-boilerplate/pkg/logger"
-	"database/sql"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"

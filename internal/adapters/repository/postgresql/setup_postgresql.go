@@ -1,17 +1,17 @@
-package utils
+package postgresql
 
 import (
 	"time"
 
 	"gin-framework-boilerplate/internal/config"
 	"gin-framework-boilerplate/internal/constants"
-	"gin-framework-boilerplate/internal/datasources/drivers"
+	"gin-framework-boilerplate/internal/ports/repository/drivers"
 
 	"github.com/jmoiron/sqlx"
 )
 
 // A function to setup Postgre connection
-func SetupPostgresConnection() (*sqlx.DB, error) {
+func SetupPostgresqlConnection() (*sqlx.DB, error) {
 	var dsn string
 	switch config.AppConfig.Environment {
 	case constants.EnvironmentDevelopment:
