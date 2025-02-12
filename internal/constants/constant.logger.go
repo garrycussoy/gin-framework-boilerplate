@@ -3,6 +3,7 @@ package constants
 const (
 	// Category
 	LoggerCategory             = "category"
+	LoggerFile                 = "file"
 	LoggerCategoryServer       = "server"
 	LoggerCategoryConfig       = "config"
 	LoggerCategoryDatabase     = "database"
