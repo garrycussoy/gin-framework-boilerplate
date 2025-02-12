@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS "appsettings" (
+    id uuid PRIMARY KEY,
+    key VARCHAR(255) NOT NULL UNIQUE,
+    value VARCHAR(255) NOT NULL
+);

@@ -1,0 +1,2 @@
+INSERT INTO "user" (id, full_name, email, phone_number, password) VALUES
+(uuid_generate_v4(), 'Super Developer', 'super@developer.com', '089508960897', '$2a$10$2Y0L484Glbf4CJI3IKouQ.50O7EPp/E4trRTQ2EAf9oBCB8A2Txi.');
