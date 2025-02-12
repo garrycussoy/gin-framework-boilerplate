@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"gin-framework-boilerplate/internal/adapters/repository/postgresql"
@@ -97,9 +98,13 @@ func seeding(db *sqlx.DB) (err error) {
 
 	// Loop through each file
 	for _, file := range files {
+		// Get version
+		// pathSlice := strings.Split(file, "\\")
+		// seederVersion := strings.Split(pathSlice[len(pathSlice)-1], "_")[0]
+		r, _ := regexp.Compile("([0-9]+){10}")
+		seederVersion := r.FindString(file)
+
 		// We will only execute following command only if the version is greater than latest seeder
-		pathSlice := strings.Split(file, "\\")
-		seederVersion := strings.Split(pathSlice[len(pathSlice)-1], "_")[0]
 		if strings.Compare(seederVersion, latestSeeder) > 0 {
 			logger.Info("Generating seeder", logrus.Fields{constants.LoggerCategory: constants.LoggerCategorySeeder, constants.LoggerFile: file})
 			data, err := ioutil.ReadFile(file)
