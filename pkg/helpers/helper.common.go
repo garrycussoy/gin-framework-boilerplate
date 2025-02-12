@@ -1,13 +1,14 @@
 package helpers
 
-// uuid "github.com/nu7hatch/gouuid"
+import (
+	uuid "github.com/nu7hatch/gouuid"
+)
 
 // Function to check whether an array contains an element or not
 func IsArrayContains(arr []string, str string) bool {
 	for _, item := range arr {
 		if item == str {
 			return true
-			break
 		}
 	}
 	return false
@@ -37,14 +38,14 @@ func IsArrayContains(arr []string, str string) bool {
 // 	return data
 // }
 
-// // Generate UUID
-// func GenerateUUID() (string, error) {
-// 	u, err := uuid.NewV4()
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	return u.String(), nil
-// }
+// Generate UUID
+func GenerateUUID() (string, error) {
+	u, err := uuid.NewV4()
+	if err != nil {
+		return "", err
+	}
+	return u.String(), nil
+}
 
 // // Extract values from nullable string (if null, we will set the value to an empty string)
 // func ExtractNullableString(val *string) string {

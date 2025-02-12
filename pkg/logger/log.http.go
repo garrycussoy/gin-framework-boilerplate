@@ -40,21 +40,25 @@ func HTTPLogger(param gin.LogFormatterParams) string {
 	}
 
 	// Formatting the log
-	var logFormat = fmt.Sprintf("%s \033[%sm %d \033[0m %s %s %d %s %s %s CorrelationID: %s\n",
+	logFormat := map[string]string{
+		"CorrelationID": fmt.Sprintf("%s", param.Keys["CorrelationId"]),
+		"Latency":       param.Latency.String(),
+		"ClientIP":      param.ClientIP,
+		"ErrorMessage":  param.ErrorMessage,
+		"UserAgent":     param.Request.UserAgent(),
+	}
+
+	var message = fmt.Sprintf("%s \033[%sm %d \033[0m %s %s %v\n",
 		constants.HTTPLogging,
 		color,
 		param.StatusCode,
 		param.Method,
 		param.Path,
-		param.Latency,
-		param.ClientIP,
-		param.ErrorMessage,
-		param.Request.UserAgent(),
-		param.Keys["CorrelationID"],
+		helpers.ConvertInterfaceToJSONString(logFormat),
 	)
 
 	// Output the log
-	Info(logFormat, logrus.Fields{constants.LoggerCategory: constants.LoggerCategoryHTTP})
+	Info(message, logrus.Fields{constants.LoggerCategory: constants.LoggerCategoryHTTP})
 
 	return ""
 }
@@ -68,25 +72,39 @@ func PayloadRequestLogger() gin.HandlerFunc {
 			rdr1 := io.NopCloser(bytes.NewBuffer(buf))
 			rdr2 := io.NopCloser(bytes.NewBuffer(buf)) // We have to create a new Buffer, because rdr1 will be read
 
-			// Formatting the log
-			bodyRequest, err := ReadBody(rdr1)
+			// Read the body, and turn it into a map
+			bodyRequest, err := helpers.ConvertStreamToMapStringInterface(rdr1)
 			if err != nil {
 				// For debugging puprose only
-				logFormat := fmt.Sprintf("%s Error while marshalling body request for %s %s. Detail: %s. CorrelationId: %s\n",
+				// Define log content
+				logContent := map[string]interface{}{
+					"Message":       fmt.Sprintf("Error while marshalling body request for %s %s", c.Request.Method, c.Request.URL.Path),
+					"Detail":        err.Error(),
+					"CorrelationId": c.GetString("CorrelationID"),
+				}
+
+				// Formatting the log
+				logFormat := fmt.Sprintf("%s %v\n",
 					constants.HTTPLogging,
-					c.Request.Method,
-					c.Request.URL.Path,
-					err.Error(),
-					c.GetString("CorrelationID"),
+					helpers.ConvertInterfaceToJSONString(logContent),
 				)
 				Debug(logFormat, logrus.Fields{constants.LoggerCategory: constants.LoggerCategoryHTTP})
 			} else {
-				logFormat := fmt.Sprintf("%s %s %s BodyRequest: %v. CorrelationId: %s\n",
+				// Define log content
+				logContent := map[string]interface{}{
+					"CorrelationId": c.GetString("CorrelationId"),
+					"BodyRequest":   bodyRequest,
+				}
+
+				// Masking some sensitive values
+				logContent = MaskingValues(logContent)
+
+				// Formatting the log
+				logFormat := fmt.Sprintf("%s %s %s %v\n",
 					constants.HTTPLogging,
 					c.Request.Method,
 					c.Request.URL.Path,
-					bodyRequest,
-					c.GetString("CorrelationID"),
+					helpers.ConvertInterfaceToJSONString(logContent),
 				)
 				Info(logFormat, logrus.Fields{constants.LoggerCategory: constants.LoggerCategoryHTTP})
 			}
