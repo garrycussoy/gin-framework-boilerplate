@@ -32,7 +32,7 @@ type App struct {
 
 func NewApp() (*App, error) {
 	// Setup database connection
-	_, err := postgresql.SetupPostgresqlConnection()
+	conn, err := postgresql.SetupPostgresqlConnection()
 	if err != nil {
 		return nil, err
 	}
@@ -57,10 +57,10 @@ func NewApp() (*App, error) {
 	// timeoutMiddleware := middlewares.NewTimeoutMiddleware()
 
 	// API routes
-	api := router.Group("api")
+	api := router.Group("bo-api")
 	routes.NewGeneralsRoute(api).Routes()
+	routes.NewAuthRoute(api, conn).Routes()
 	// routes.NewPatientsRoute(api, conn, authMiddleware, timeoutMiddleware, wiproClient, omnicareClient).Routes()
-	// routes.NewAppointmentRoute(api, conn, authMiddleware, timeoutMiddleware, omnicareClient, wiproClient).Routes()
 	// routes.NewMasterDataRoute(api, conn, authMiddleware, timeoutMiddleware, omnicareClient, wiproClient).Routes()
 	// routes.NewBillingsRoute(api, conn, authMiddleware, timeoutMiddleware, omnicareClient, wiproClient).Routes()
 	// routes.NewOrderRoute(api, conn, authMiddleware, timeoutMiddleware, omnicareClient, wiproClient).Routes()
