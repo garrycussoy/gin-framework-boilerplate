@@ -3,6 +3,7 @@ module gin-framework-boilerplate
 go 1.23.4
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/jmoiron/sqlx v1.4.0
@@ -13,6 +14,7 @@ require (
 	github.com/simukti/sqldb-logger/logadapter/zerologadapter v0.0.0-20230108155151-646c1a075551
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.19.0
+	golang.org/x/crypto v0.31.0
 )
 
 require (
@@ -50,7 +52,6 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/arch v0.8.0 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect

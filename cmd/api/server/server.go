@@ -17,8 +17,9 @@ import (
 	"gin-framework-boilerplate/internal/http/routes"
 
 	"gin-framework-boilerplate/internal/adapters/repository/postgresql"
-	// "gin-framework-boilerplate/pkg/jwt"
+	"gin-framework-boilerplate/pkg/jwt"
 	"gin-framework-boilerplate/pkg/logger"
+
 	// "gin-framework-boilerplate/pkg/notifications"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +45,7 @@ func NewApp() (*App, error) {
 	// httpClient := setupHttpClient()
 
 	// JWT service
-	// jwtService := jwt.NewJWTService(config.AppConfig.JWTSecret, config.AppConfig.JWTIssuer, config.AppConfig.JWTExpired)
+	jwtService := jwt.NewJWTService(config.AppConfig.JWTSecret, config.AppConfig.JWTIssuer, config.AppConfig.JWTExpired)
 
 	// Notification service
 	// emailNotificationService := notifications.NewSendEmailNotificationService(config.AppConfig.EmailSender, config.AppConfig.EmailPassword)
@@ -59,7 +60,7 @@ func NewApp() (*App, error) {
 	// API routes
 	api := router.Group("bo-api")
 	routes.NewGeneralsRoute(api).Routes()
-	routes.NewAuthRoute(api, conn).Routes()
+	routes.NewAuthRoute(api, conn, jwtService).Routes()
 	// routes.NewPatientsRoute(api, conn, authMiddleware, timeoutMiddleware, wiproClient, omnicareClient).Routes()
 	// routes.NewMasterDataRoute(api, conn, authMiddleware, timeoutMiddleware, omnicareClient, wiproClient).Routes()
 	// routes.NewBillingsRoute(api, conn, authMiddleware, timeoutMiddleware, omnicareClient, wiproClient).Routes()

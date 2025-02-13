@@ -4,6 +4,8 @@ import (
 	Usecase "gin-framework-boilerplate/internal/business/usecases"
 	// PostgresRepository "gin-framework-boilerplate/internal/datasources/repositories/postgres"
 	Handler "gin-framework-boilerplate/internal/http/handlers"
+	"gin-framework-boilerplate/pkg/jwt"
+
 	// "gin-framework-boilerplate/internal/http/middlewares"
 
 	"github.com/gin-gonic/gin"
@@ -18,10 +20,10 @@ type authRoutes struct {
 	// timeoutMiddleware middlewares.TimeoutMiddleware
 }
 
-func NewAuthRoute(router *gin.RouterGroup, db *sqlx.DB) *authRoutes {
+func NewAuthRoute(router *gin.RouterGroup, db *sqlx.DB, jwtService jwt.JWTService) *authRoutes {
 	// PatientRepository := PostgresRepository.NewPatientRepository(db)
 	// MasterDataRepository := PostgresRepository.NewMasterDataRepository(db)
-	AuthUsecase := Usecase.NewAuthUsecase()
+	AuthUsecase := Usecase.NewAuthUsecase(jwtService)
 	AuthHandler := Handler.NewAuthHandler(AuthUsecase)
 
 	return &authRoutes{Handler: AuthHandler, router: router, db: db}
