@@ -44,8 +44,12 @@ func HTTPLogger(param gin.LogFormatterParams) string {
 		"CorrelationID": fmt.Sprintf("%s", param.Keys["CorrelationId"]),
 		"Latency":       param.Latency.String(),
 		"ClientIP":      param.ClientIP,
-		"ErrorMessage":  param.ErrorMessage,
 		"UserAgent":     param.Request.UserAgent(),
+	}
+
+	// Add errorMessage only if the value isn't empty
+	if param.ErrorMessage != "" {
+		logFormat["ErrorMessage"] = param.ErrorMessage
 	}
 
 	var message = fmt.Sprintf("%s \033[%sm %d \033[0m %s %s %v\n",

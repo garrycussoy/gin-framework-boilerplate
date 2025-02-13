@@ -9,3 +9,9 @@ func AuthorizationFailed(detail string) CustomError {
 func ValidationFailed(detail string) CustomError {
 	return CreateCustomError(400, "0002", "Payload validation failed", detail)
 }
+
+// ===== Domain-related error =====
+// Auth domain
+func AuthDomainError(statusCode int, detail string) CustomError {
+	return CreateCustomError(statusCode, "0101", "Auth domain error", detail)
+}
