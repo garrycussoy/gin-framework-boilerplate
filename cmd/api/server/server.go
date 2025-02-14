@@ -10,13 +10,13 @@ import (
 	"syscall"
 	"time"
 
+	"gin-framework-boilerplate/internal/adapters/repository/postgresql"
 	"gin-framework-boilerplate/internal/config"
 	"gin-framework-boilerplate/internal/constants"
 
 	"gin-framework-boilerplate/internal/http/middlewares"
 	"gin-framework-boilerplate/internal/http/routes"
 
-	"gin-framework-boilerplate/internal/adapters/repository/postgresql"
 	"gin-framework-boilerplate/pkg/jwt"
 	"gin-framework-boilerplate/pkg/logger"
 

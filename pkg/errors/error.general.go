@@ -15,3 +15,9 @@ func ValidationFailed(detail string) CustomError {
 func AuthDomainError(statusCode int, detail string) CustomError {
 	return CreateCustomError(statusCode, "0101", "Auth domain error", detail)
 }
+
+// ===== Repository-related error =====
+// User repository
+func UserRepositoryError(statusCode int, detail string) CustomError {
+	return CreateCustomError(statusCode, "0201", "User repository error", detail)
+}

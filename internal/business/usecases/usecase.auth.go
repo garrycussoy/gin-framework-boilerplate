@@ -4,6 +4,7 @@ import (
 	"context"
 
 	Domains "gin-framework-boilerplate/internal/business/domains"
+	"gin-framework-boilerplate/internal/ports/repository"
 	Errors "gin-framework-boilerplate/pkg/errors"
 	"gin-framework-boilerplate/pkg/helpers"
 
@@ -12,13 +13,13 @@ import (
 
 type authUsecase struct {
 	jwtService jwt.JWTService
-	// patientRepo    Domains.PatientRepository
-	// masterDataRepo Domains.MasterDataRepository
+	userRepo   repository.UserRepository
 }
 
-func NewAuthUsecase(jwtService jwt.JWTService) Domains.AuthUsecase {
+func NewAuthUsecase(jwtService jwt.JWTService, userRepo repository.UserRepository) Domains.AuthUsecase {
 	return &authUsecase{
 		jwtService: jwtService,
+		userRepo:   userRepo,
 	}
 }
 
@@ -27,13 +28,19 @@ func (authUC *authUsecase) UserLogin(ctx context.Context, inDom *Domains.UserLog
 	resp := Domains.UserLoginDomain{}
 	var err error
 
+	// Get user by email
+	user, err := authUC.userRepo.GetUserByEmail(ctx, inDom.Email)
+	if err != nil {
+		return resp, Errors.AuthDomainError(400, "Invalid email or password")
+	}
+
 	// Validate password
-	if !helpers.ValidateHash(inDom.Password, "$2a$10$ZQ1qwpA7WEyAG6niUSHbjOlXmFB6F2N3GHT.mlhKY1.nsI8aep4kW") {
+	if !helpers.ValidateHash(inDom.Password, user.Password) {
 		return resp, Errors.AuthDomainError(400, "Invalid email or password")
 	}
 
 	// Generate token
-	resp.Token, err = authUC.jwtService.GenerateToken("id-007", "Super Developer", inDom.Email)
+	resp.Token, err = authUC.jwtService.GenerateToken(user.Id, "Super Developer", user.Email)
 	if err != nil {
 		return resp, Errors.AuthDomainError(500, err.Error())
 	}
