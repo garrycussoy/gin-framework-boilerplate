@@ -6,7 +6,7 @@ import (
 	"gin-framework-boilerplate/internal/http/datatransfers/responses"
 	Errors "gin-framework-boilerplate/pkg/errors"
 
-	// "gin-framework-boilerplate/pkg/validators"
+	"gin-framework-boilerplate/pkg/validators"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,10 +31,10 @@ func (authH AuthHandler) UserLogin(ctx *gin.Context) {
 	}
 
 	// Validate body request
-	// if err := validators.ValidatePayloads(UserLoginRequest, true); err != nil {
-	// 	ErrorResponse(ctx, Errors.ValidationFailed(err.Error()))
-	// 	return
-	// }
+	if err := validators.ValidatePayloads(UserLoginRequest); err != nil {
+		ErrorResponse(ctx, Errors.ValidationFailed(err.Error()))
+		return
+	}
 
 	// Do login process
 	resp, err := authH.usecase.UserLogin(ctx.Request.Context(), UserLoginRequest.ToUserLoginDomain())
