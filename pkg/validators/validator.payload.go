@@ -4,6 +4,7 @@ package validators
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"gin-framework-boilerplate/pkg/helpers"
 
@@ -19,8 +20,8 @@ var mapHelper = map[string]string{
 	"numeric":   "must contain at least one digit",
 }
 
-// Define some parameters needed
-var helperParam = []string{"min", "max", "containsany"}
+// Define some tags which need parameter
+var needParam = []string{"min", "max", "containsany", "required_if"}
 
 // Function to validate the payload
 func ValidatePayloads(payload interface{}) (err error) {
@@ -38,8 +39,8 @@ func ValidatePayloads(payload interface{}) (err error) {
 			tag = e.Tag()
 			param = e.Param()
 
-			// Check whether the error is one in the helperParam or not
-			if helpers.IsArrayContains(helperParam, tag) {
+			// Check whether the error is one in the tag which need param or not
+			if helpers.IsArrayContains(needParam, tag) {
 				message = errWithParam(field, tag, param)
 				continue
 			}
@@ -65,6 +66,8 @@ func errWithParam(field, tag, param string) string {
 		message = fmt.Sprintf("must be less than %s characters", param)
 	case "containsany":
 		message = fmt.Sprintf("must contain at least one symbol of '%s'", param)
+	case "required_if":
+		message = fmt.Sprintf("is required since '%s' equals '%s'", strings.Split(param, " ")[0], strings.Split(param, " ")[1])
 	}
 
 	return fmt.Sprintf("%s: %s", field, message)
