@@ -41,6 +41,9 @@ func NewApp() (*App, error) {
 	// Setup router
 	router := setupRouter()
 
+	// Setup middleware
+	router = setupMiddleware(router)
+
 	// Setup HTTP client
 	// httpClient := setupHttpClient()
 
@@ -122,15 +125,20 @@ func setupRouter() *gin.Engine {
 
 	// Create a new router instance
 	router := gin.New()
-
-	// Set up middlewares
-	router.Use(middlewares.CORSMiddleware())               // Setup CORS
-	router.Use(middlewares.CorrelationIdMiddleware())      // Setup Correlation-ID
-	router.Use(gin.LoggerWithFormatter(logger.HTTPLogger)) // Log some basic data of incoming HTTP request
-	router.Use(logger.PayloadRequestLogger())              // Log incoming HTTP request payload
-	router.Use(gin.Recovery())                             // Recover any panic
-
 	return router
+}
+
+// A function to setup middlewares
+func setupMiddleware(r *gin.Engine) *gin.Engine {
+	// Set up middlewares
+	r.Use(middlewares.CORSMiddleware())               // Setup CORS
+	r.Use(middlewares.CorrelationIdMiddleware())      // Setup Correlation-ID
+	r.Use(gin.LoggerWithFormatter(logger.HTTPLogger)) // Log some basic data of incoming HTTP request
+	r.Use(logger.RequestPayloadLogger())              // Log incoming HTTP request payload
+	r.Use(logger.ResponsePayloadLogger())             // Log response body of incoming HTTP request
+	r.Use(gin.Recovery())                             // Recover any panic
+
+	return r
 }
 
 // A function to setup HTTP call system

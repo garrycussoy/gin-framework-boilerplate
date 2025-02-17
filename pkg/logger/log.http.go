@@ -19,11 +19,23 @@ const (
 	Green  = "42"
 )
 
-// Define which methods that will trigger PayloadRequestLogger flow
+// Define which methods that will trigger RequestPayloadLogger flow
 var allowedMethods = []string{
 	"POST",
 	"PUT",
 	"DELETE",
+}
+
+// Define custom body log writer
+type bodyLogWriter struct {
+	gin.ResponseWriter
+	body *bytes.Buffer
+}
+
+// We need to redefine Write method
+func (w bodyLogWriter) Write(b []byte) (int, error) {
+	w.body.Write(b)
+	return w.ResponseWriter.Write(b)
 }
 
 // Function to log some basic data of incoming HTTP request
@@ -68,7 +80,7 @@ func HTTPLogger(param gin.LogFormatterParams) string {
 }
 
 // A function to log incoming HTTP request payload
-func PayloadRequestLogger() gin.HandlerFunc {
+func RequestPayloadLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Do following process only for allowed methods
 		if helpers.IsArrayContains(allowedMethods, c.Request.Method) {
@@ -116,5 +128,37 @@ func PayloadRequestLogger() gin.HandlerFunc {
 			c.Request.Body = rdr2
 		}
 		c.Next()
+	}
+}
+
+// A function to log the response payload of incoming HTTP request
+func ResponsePayloadLogger() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Get correlationId
+		logContent := map[string]interface{}{
+			"CorrelationId": c.GetString("CorrelationId"),
+		}
+
+		// Create new instance of body log writer
+		writer := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
+		c.Writer = writer
+		c.Next()
+
+		// Get response body
+		responseBody, _ := helpers.ConvertJSONStringToMapStringInterface(writer.body.String())
+		logContent["ResponseBody"] = responseBody
+
+		// Masking some sensitive values
+		logContent = MaskingValues(logContent)
+
+		// Formatting the log
+		logFormat := fmt.Sprintf("%s %s %s %v\n",
+			constants.HTTPLogging,
+			c.Request.Method,
+			c.Request.URL.Path,
+			helpers.ConvertInterfaceToJSONString(logContent),
+		)
+
+		Info(logFormat, logrus.Fields{constants.LoggerCategory: constants.LoggerCategoryHTTP})
 	}
 }
