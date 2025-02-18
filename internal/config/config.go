@@ -28,11 +28,9 @@ type Config struct {
 	JWTIssuer                   string `mapstructure:"JWT_ISSUER"`
 	ChangePasswordTokenLifespan int    `mapstructure:"CHANGE_PASSWORD_TOKEN_LIFESPAN"`
 
-	ServerReadTimeout    int `mapstructure:"SERVER_READ_TIMEOUT"`
-	ServerWriteTimeout   int `mapstructure:"SERVER_WRITE_TIMEOUT"`
-	LongHandlerTimeout   int `mapstructure:"LONG_HANDLER_TIMEOUT"`
-	MediumHandlerTimeout int `mapstructure:"MEDIUM_HANDLER_TIMEOUT"`
-	ShortHandlerTimeout  int `mapstructure:"SHORT_HANDLER_TIMEOUT"`
+	ServerReadTimeout  int `mapstructure:"SERVER_READ_TIMEOUT"`
+	ServerWriteTimeout int `mapstructure:"SERVER_WRITE_TIMEOUT"`
+	HandlerTimeout     int `mapstructure:"HANDLER_TIMEOUT"`
 
 	REDISHost     string `mapstructure:"REDIS_HOST"`
 	REDISPassword string `mapstructure:"REDIS_PASS"`
@@ -77,7 +75,7 @@ func InitializeAppConfig(isTesting bool) error {
 	if AppConfig.Port == 0 || AppConfig.Environment == "" || AppConfig.JWTSecret == "" || AppConfig.JWTExpired == 0 || AppConfig.JWTIssuer == "" || AppConfig.EmailSender == "" || AppConfig.EmailPassword == "" || AppConfig.REDISHost == "" || AppConfig.REDISPassword == "" || AppConfig.REDISExpired == 0 || AppConfig.DBPostgreDriver == "" {
 		return constants.ErrEmptyVar
 	}
- 
+
 	switch AppConfig.Environment {
 	case constants.EnvironmentDevelopment:
 		if AppConfig.DBPostgreDsn == "" {

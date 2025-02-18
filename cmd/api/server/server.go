@@ -146,6 +146,7 @@ func setupMiddleware(r *gin.Engine) *gin.Engine {
 	r.Use(gin.LoggerWithFormatter(logger.HTTPLogger)) // Log some basic data of incoming HTTP request
 	r.Use(logger.RequestPayloadLogger())              // Log incoming HTTP request payload
 	r.Use(logger.ResponsePayloadLogger())             // Log response body of incoming HTTP request
+	r.Use(middlewares.TimeoutMiddleware())            // Setup general endpoint timeout
 	r.Use(gin.Recovery())                             // Recover any panic
 
 	return r

@@ -10,6 +10,10 @@ func ValidationFailed(detail string) CustomError {
 	return CreateCustomError(400, "0002", "Payload validation failed", detail)
 }
 
+func TimeoutLimitExceeded() CustomError {
+	return CreateCustomError(408, "0003", "Timeout limit exceeded", nil)
+}
+
 // ===== Domain-related error =====
 // Auth domain
 func AuthDomainError(statusCode int, detail string) CustomError {
