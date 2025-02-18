@@ -21,7 +21,14 @@ func NewAuthHandler(usecase Domains.AuthUsecase) AuthHandler {
 	}
 }
 
-// Handler to handle user login process
+// @Summary Handle user login process
+// @Description User needs to enter email and password, then system will get related user data in database by email, and validate the password. If the user is validated, return access token.
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param body body requests.UserLoginRequest true "Contain user's email and password"
+// @Success 200 {object} responses.UserLoginResponse
+// @Router /login [post]
 func (authH AuthHandler) UserLogin(ctx *gin.Context) {
 	// Extract body request
 	var UserLoginRequest requests.UserLoginRequest

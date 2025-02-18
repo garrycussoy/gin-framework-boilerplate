@@ -25,6 +25,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-resty/resty/v2"
 	"github.com/sirupsen/logrus"
+
+	docs "gin-framework-boilerplate/cmd/api/docs"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type App struct {
@@ -125,6 +130,11 @@ func setupRouter() *gin.Engine {
 
 	// Create a new router instance
 	router := gin.New()
+
+	// Setup swagger
+	docs.SwaggerInfo.BasePath = "/bo-api"
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	return router
 }
 

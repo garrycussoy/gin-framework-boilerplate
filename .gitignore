@@ -3,3 +3,4 @@ vendor/*
 
 go-rest-boilerplate.out
 .env
+cmd/api/docs
