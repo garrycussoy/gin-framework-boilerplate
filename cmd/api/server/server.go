@@ -58,21 +58,14 @@ func NewApp() (*App, error) {
 	// Notification service
 	// emailNotificationService := notifications.NewSendEmailNotificationService(config.AppConfig.EmailSender, config.AppConfig.EmailPassword)
 
-	// User middleware
-	// User with valid basic token can access endpoint
-	// authMiddleware := middlewares.NewAuthMiddleware(jwtService, false)
-
-	// Timeout middleware
-	// timeoutMiddleware := middlewares.NewTimeoutMiddleware()
+	// Initialize auth middleware
+	authMiddleware := middlewares.NewAuthMiddleware(jwtService)
 
 	// API routes
 	api := router.Group("bo-api")
 	routes.NewGeneralsRoute(api).Routes()
 	routes.NewAuthRoute(api, conn, jwtService).Routes()
-	// routes.NewPatientsRoute(api, conn, authMiddleware, timeoutMiddleware, wiproClient, omnicareClient).Routes()
-	// routes.NewMasterDataRoute(api, conn, authMiddleware, timeoutMiddleware, omnicareClient, wiproClient).Routes()
-	// routes.NewBillingsRoute(api, conn, authMiddleware, timeoutMiddleware, omnicareClient, wiproClient).Routes()
-	// routes.NewOrderRoute(api, conn, authMiddleware, timeoutMiddleware, omnicareClient, wiproClient).Routes()
+	routes.NewUsersRoute(api, conn, authMiddleware).Routes()
 
 	// Setup HTTP server
 	server := &http.Server{
