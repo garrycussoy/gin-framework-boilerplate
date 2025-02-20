@@ -3,9 +3,11 @@ package repository
 import (
 	"context"
 
-	"gin-framework-boilerplate/internal/ports/repository/records"
+	DTO "gin-framework-boilerplate/internal/ports/repository/dto"
+	Records "gin-framework-boilerplate/internal/ports/repository/records"
 )
 
 type UserRepository interface {
-	GetUserByEmail(ctx context.Context, email string) (user records.User, err error)
+	GetUsers(ctx context.Context, userFilter DTO.UserFilterDto) (users []Records.User, err error)
+	GetUserByEmail(ctx context.Context, email string) (user Records.User, err error)
 }

@@ -47,13 +47,13 @@ func GenerateUUID() (string, error) {
 	return u.String(), nil
 }
 
-// // Extract values from nullable string (if null, we will set the value to an empty string)
-// func ExtractNullableString(val *string) string {
-// 	if val != nil {
-// 		return *val
-// 	}
-// 	return ""
-// }
+// Extract values from nullable string (if null, we will set the value to an empty string)
+func ExtractNullableString(val *string) string {
+	if val != nil {
+		return *val
+	}
+	return ""
+}
 
 // // Convert a string to a pointer string
 // func CreatePointerString(str string) *string {
