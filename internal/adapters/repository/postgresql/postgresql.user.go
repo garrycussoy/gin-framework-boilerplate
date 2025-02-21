@@ -26,11 +26,21 @@ func (r *postgresqlUserRepository) GetUsers(ctx context.Context, userFilter DTO.
 	// Build the query
 	filter := map[string][]*string{
 		"branch_id": {userFilter.BranchId},
+		"start": {
+			userFilter.Start,
+			helpers.CreatePointerString(">="),
+			helpers.CreatePointerString("created_at"),
+		},
+		"end": {
+			userFilter.End,
+			helpers.CreatePointerString("<="),
+			helpers.CreatePointerString("created_at"),
+		},
 	}
 	query := helpers.FilterQueryGenerator("user", filter)
 
 	// Get related user based on email
-	err = r.conn.GetContext(ctx, users, query)
+	err = r.conn.SelectContext(ctx, &users, query)
 	if err != nil {
 		return []Records.User{}, err
 	}

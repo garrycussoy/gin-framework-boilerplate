@@ -27,4 +27,5 @@ func NewUsersRoute(router *gin.RouterGroup, db *sqlx.DB, authMiddleware gin.Hand
 func (r *usersRoutes) Routes() {
 	// Routing
 	r.router.GET("/user/:email", r.authMiddleware, r.Handler.GetUserByEmail)
+	r.router.GET("/users", r.authMiddleware, r.Handler.GetUsers)
 }

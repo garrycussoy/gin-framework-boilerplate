@@ -18,6 +18,21 @@ func NewUserUsecase(userRepo repository.UserRepository) Domains.UserUsecase {
 	}
 }
 
+func (userUC *userUsecase) GetUsers(ctx context.Context, inDom *Domains.UserFilterDomain) ([]Domains.UserDomain, Errors.CustomError) {
+	// Setup base response
+	resp := []Domains.UserDomain{}
+	var err error
+
+	// Get users based on given filter
+	users, err := userUC.userRepo.GetUsers(ctx, inDom.FromUserFilterDomainToUserFilterDTO())
+	if err != nil {
+		return resp, Errors.UserRepositoryError(500, err.Error())
+	}
+	resp = Domains.FromUserArrayToUserDomainArray(users)
+
+	return resp, nil
+}
+
 func (userUC *userUsecase) GetUserByEmail(ctx context.Context, inDom *Domains.UserDomain) (Domains.UserDomain, Errors.CustomError) {
 	// Setup base response
 	resp := Domains.UserDomain{}

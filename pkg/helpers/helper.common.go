@@ -55,11 +55,11 @@ func ExtractNullableString(val *string) string {
 	return ""
 }
 
-// // Convert a string to a pointer string
-// func CreatePointerString(str string) *string {
-// 	tempStr := str
-// 	return &tempStr
-// }
+// Convert a string to a pointer string
+func CreatePointerString(str string) *string {
+	tempStr := str
+	return &tempStr
+}
 
 // // Read a CSV file into list of list of strings
 // func ReadCSVFile(file *multipart.FileHeader) ([][]string, error) {
