@@ -4,6 +4,7 @@ import (
 	Repository "gin-framework-boilerplate/internal/adapters/repository/postgresql"
 	Usecase "gin-framework-boilerplate/internal/business/usecases"
 	Handler "gin-framework-boilerplate/internal/http/handlers"
+	ESBPorts "gin-framework-boilerplate/internal/ports/clients/esb"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -14,14 +15,15 @@ type usersRoutes struct {
 	router         *gin.RouterGroup
 	db             *sqlx.DB
 	authMiddleware gin.HandlerFunc
+	esbC           ESBPorts.ESBClient
 }
 
-func NewUsersRoute(router *gin.RouterGroup, db *sqlx.DB, authMiddleware gin.HandlerFunc) *usersRoutes {
+func NewUsersRoute(router *gin.RouterGroup, db *sqlx.DB, authMiddleware gin.HandlerFunc, esbC ESBPorts.ESBClient) *usersRoutes {
 	UserRepository := Repository.NewUserRepository(db)
-	UserUsecase := Usecase.NewUserUsecase(UserRepository)
+	UserUsecase := Usecase.NewUserUsecase(UserRepository, esbC)
 	UserHandler := Handler.NewUserHandler(UserUsecase)
 
-	return &usersRoutes{Handler: UserHandler, router: router, db: db, authMiddleware: authMiddleware}
+	return &usersRoutes{Handler: UserHandler, router: router, db: db, authMiddleware: authMiddleware, esbC: esbC}
 }
 
 func (r *usersRoutes) Routes() {

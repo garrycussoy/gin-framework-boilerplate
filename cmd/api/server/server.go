@@ -54,7 +54,7 @@ func NewApp() (*App, error) {
 	httpClient := setupHttpClient()
 
 	// Define clients service
-	_ = ESBAdapters.NewESBClient(httpClient)
+	esbClient := ESBAdapters.NewESBClient(httpClient)
 
 	// JWT service
 	jwtService := jwt.NewJWTService(config.AppConfig.JWTSecret, config.AppConfig.JWTIssuer, config.AppConfig.JWTExpired)
@@ -69,7 +69,7 @@ func NewApp() (*App, error) {
 	api := router.Group("bo-api")
 	routes.NewGeneralsRoute(api).Routes()
 	routes.NewAuthRoute(api, conn, jwtService).Routes()
-	routes.NewUsersRoute(api, conn, authMiddleware).Routes()
+	routes.NewUsersRoute(api, conn, authMiddleware, esbClient).Routes()
 
 	// Setup HTTP server
 	server := &http.Server{

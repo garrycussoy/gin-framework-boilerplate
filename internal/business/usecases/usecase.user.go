@@ -4,17 +4,20 @@ import (
 	"context"
 
 	Domains "gin-framework-boilerplate/internal/business/domains"
-	"gin-framework-boilerplate/internal/ports/repository"
+	ESBPorts "gin-framework-boilerplate/internal/ports/clients/esb"
+	Repository "gin-framework-boilerplate/internal/ports/repository"
 	Errors "gin-framework-boilerplate/pkg/errors"
 )
 
 type userUsecase struct {
-	userRepo repository.UserRepository
+	userRepo  Repository.UserRepository
+	esbClient ESBPorts.ESBClient
 }
 
-func NewUserUsecase(userRepo repository.UserRepository) Domains.UserUsecase {
+func NewUserUsecase(userRepo Repository.UserRepository, esbClient ESBPorts.ESBClient) Domains.UserUsecase {
 	return &userUsecase{
-		userRepo: userRepo,
+		userRepo:  userRepo,
+		esbClient: esbClient,
 	}
 }
 
@@ -37,6 +40,10 @@ func (userUC *userUsecase) GetUserByEmail(ctx context.Context, inDom *Domains.Us
 	// Setup base response
 	resp := Domains.UserDomain{}
 	var err error
+
+	// Sample request to ESB client
+	// NOTES : Following code can be removed later as this is just an example
+	userUC.esbClient.Sample(ctx)
 
 	// Get user by email
 	user, err := userUC.userRepo.GetUserByEmail(ctx, inDom.Email)
