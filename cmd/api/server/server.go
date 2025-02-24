@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	ESBAdapters "gin-framework-boilerplate/internal/adapters/clients/esb"
 	"gin-framework-boilerplate/internal/adapters/repository/postgresql"
 	"gin-framework-boilerplate/internal/config"
 	"gin-framework-boilerplate/internal/constants"
@@ -50,7 +51,10 @@ func NewApp() (*App, error) {
 	router = setupMiddleware(router)
 
 	// Setup HTTP client
-	// httpClient := setupHttpClient()
+	httpClient := setupHttpClient()
+
+	// Define clients service
+	_ = ESBAdapters.NewESBClient(httpClient)
 
 	// JWT service
 	jwtService := jwt.NewJWTService(config.AppConfig.JWTSecret, config.AppConfig.JWTIssuer, config.AppConfig.JWTExpired)

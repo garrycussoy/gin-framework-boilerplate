@@ -40,6 +40,8 @@ type Config struct {
 
 	EmailSender   string `mapstructure:"EMAIL_SENDER"`
 	EmailPassword string `mapstructure:"EMAIL_PASSWORD"`
+
+	ESBHost string `mapstructure:"ESB_HOST"`
 }
 
 // Function to load config from stated source
