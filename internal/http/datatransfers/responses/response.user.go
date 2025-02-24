@@ -12,7 +12,6 @@ type UserResponse struct {
 	FullName    string        `json:"full_name"`
 	Email       string        `json:"email"`
 	PhoneNumber string        `json:"phone_number"`
-	Password    string        `json:"password"`
 	BranchId    *string       `json:"branch_id"`
 	CreatedAt   time.Time     `json:"created_at"`
 	CreatedBy   *string       `json:"created_by"`
@@ -30,7 +29,6 @@ func FromUserDomainToUserResponse(dom Domains.UserDomain) UserResponse {
 		FullName:    dom.FullName,
 		Email:       dom.Email,
 		PhoneNumber: dom.PhoneNumber,
-		Password:    dom.Password,
 		BranchId:    dom.BranchId,
 		CreatedAt:   dom.CreatedAt,
 		CreatedBy:   dom.CreatedBy,
