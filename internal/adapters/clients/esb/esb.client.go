@@ -37,11 +37,16 @@ func (esbC *esbClient) Sample(ctx context.Context) (ESBPorts.GeneralResponseDTO,
 		// 	"username": "username",
 		// 	"password": "password",
 		// }).
+		// SetQueryParams(map[string]string{
+		// 	"key1": "value1",
+		// 	"key2": "value2",
+		// }).
 		SetBody(map[string]string{
 			"username": "username",
 			"password": "password",
 		}).
 		SetResult(&resp).
+		// Get(config.AppConfig.ESBHost + "/sample")
 		Post(config.AppConfig.ESBHost + "/sample")
 
 	// Handling the response

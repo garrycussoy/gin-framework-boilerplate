@@ -39,7 +39,7 @@ func ExternalHTTPRequestLogger(c *resty.Client, req *resty.Request) error {
 
 	// Differentiate some logging format based on method
 	if req.Method != "GET" {
-		if req.FormData != nil {
+		if req.Body == nil {
 			// Formatting form data
 			bodyRequest = FormattingFormData(bodyRequest)
 		}

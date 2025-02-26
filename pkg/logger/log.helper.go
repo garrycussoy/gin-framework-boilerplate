@@ -37,7 +37,7 @@ func FormattingFormData(log map[string]interface{}) map[string]interface{} {
 	for k, v := range log {
 		// Turn the value into string
 		valueStr := fmt.Sprintf("%s", v)
-		log[k] = valueStr
+		log[k] = valueStr[1 : len(valueStr)-1]
 	}
 	return log
 }
