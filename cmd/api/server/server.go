@@ -47,11 +47,11 @@ func NewApp() (*App, error) {
 	// Setup router
 	router := setupRouter()
 
-	// Setup middleware
-	router = setupMiddleware(router)
-
 	// Setup HTTP client
 	httpClient := setupHttpClient()
+
+	// Setup middleware
+	router = setupMiddleware(router, httpClient)
 
 	// Define clients service
 	esbClient := ESBAdapters.NewESBClient(httpClient)
@@ -136,15 +136,17 @@ func setupRouter() *gin.Engine {
 }
 
 // A function to setup middlewares
-func setupMiddleware(r *gin.Engine) *gin.Engine {
+func setupMiddleware(r *gin.Engine, httpClient *resty.Client) *gin.Engine {
 	// Set up middlewares
-	r.Use(middlewares.CORSMiddleware())               // Setup CORS
-	r.Use(middlewares.CorrelationIdMiddleware())      // Setup Correlation-ID
-	r.Use(gin.LoggerWithFormatter(logger.HTTPLogger)) // Log some basic data of incoming HTTP request
-	r.Use(logger.RequestPayloadLogger())              // Log incoming HTTP request payload
-	r.Use(logger.ResponsePayloadLogger())             // Log response body of incoming HTTP request
-	r.Use(middlewares.TimeoutMiddleware())            // Setup general endpoint timeout
-	r.Use(gin.Recovery())                             // Recover any panic
+	r.Use(middlewares.CORSMiddleware())                      // Setup CORS
+	r.Use(middlewares.CorrelationIdMiddleware())             // Setup Correlation-ID
+	r.Use(gin.LoggerWithFormatter(logger.HTTPLogger))        // Log some basic data of incoming HTTP request
+	r.Use(logger.RequestPayloadLogger())                     // Log incoming HTTP request payload
+	r.Use(logger.ResponsePayloadLogger())                    // Log response body of incoming HTTP request
+	r.Use(logger.ExternalHTTPRequestMiddleware(httpClient))  // Log external HTTP request payload
+	r.Use(logger.ExternalHTTPResponseMiddleware(httpClient)) // Log response body of external HTTP request
+	r.Use(middlewares.TimeoutMiddleware())                   // Setup general endpoint timeout
+	r.Use(gin.Recovery())                                    // Recover any panic
 
 	return r
 }
@@ -153,10 +155,6 @@ func setupMiddleware(r *gin.Engine) *gin.Engine {
 func setupHttpClient() *resty.Client {
 	// Create a Resty client
 	client := resty.New()
-
-	// Setup logging system
-	client.OnBeforeRequest(logger.ExternalHTTPRequestLogger)
-	client.OnAfterResponse(logger.ExternalHTTPResponseLogger)
 
 	// Setup retry policy
 	client.SetRetryCount(5).
