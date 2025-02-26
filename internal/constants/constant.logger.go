@@ -14,5 +14,6 @@ const (
 	LoggerCategoryNotification = "notification"
 
 	// Some other logging-related constants
-	HTTPLogging = "[LOGGING HTTP]"
+	HTTPLogging         = "[LOGGING HTTP]"
+	ExternalHTTPLogging = "[LOGGING EXTERNAL HTTP]"
 )

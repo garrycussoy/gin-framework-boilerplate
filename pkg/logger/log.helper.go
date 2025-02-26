@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"gin-framework-boilerplate/pkg/helpers"
 )
 
@@ -32,11 +33,11 @@ func MaskingValues(log map[string]interface{}) map[string]interface{} {
 }
 
 // A function to formatting form-data
-// func FormattingFormData(log map[string]interface{}) map[string]interface{} {
-// 	for k, v := range log {
-// 		// Turn the value into string
-// 		valueStr := fmt.Sprintf("%s", v)
-// 		log[k] = valueStr[1 : len(valueStr)-1]
-// 	}
-// 	return log
-// }
+func FormattingFormData(log map[string]interface{}) map[string]interface{} {
+	for k, v := range log {
+		// Turn the value into string
+		valueStr := fmt.Sprintf("%s", v)
+		log[k] = valueStr
+	}
+	return log
+}

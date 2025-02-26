@@ -155,8 +155,8 @@ func setupHttpClient() *resty.Client {
 	client := resty.New()
 
 	// Setup logging system
-	// client.OnBeforeRequest(logger.ExternalHTTPRequestLogger)
-	// client.OnAfterResponse(logger.ExternalHTTPResponseLogger)
+	client.OnBeforeRequest(logger.ExternalHTTPRequestLogger)
+	client.OnAfterResponse(logger.ExternalHTTPResponseLogger)
 
 	// Setup retry policy
 	client.SetRetryCount(5).
