@@ -36,10 +36,10 @@ func NewJWTService(secretKey, issuer string, expired int) JWTService {
 }
 
 // Function to generate JWT
-func (j *jwtService) GenerateToken(userID string, role string, email string) (t string, err error) {
+func (j *jwtService) GenerateToken(userId string, role string, email string) (t string, err error) {
 	// Define the claim
 	claims := &JwtCustomClaim{
-		userID,
+		userId,
 		role,
 		email,
 		driJWT.StandardClaims{
