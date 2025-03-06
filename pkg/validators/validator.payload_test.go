@@ -14,48 +14,51 @@ type DummyPayload struct {
 	Password string `json:"password" validate:"required,min=6"`
 }
 
-// Test ValidatePayloads function
 func TestValidatePayloads(t *testing.T) {
-	// Test case 1: detect missing value of a required field
-	payload := DummyPayload{
-		Email:    "gin@example.com",
-		Password: "",
-	}
-	err := Validator.ValidatePayloads(payload)
+	t.Run("Test 1 | Missing required field", func(t *testing.T) {
+		payload := DummyPayload{
+			Email:    "gin@example.com",
+			Password: "",
+		}
+		err := Validator.ValidatePayloads(payload)
 
-	// Assertions
-	assert.NotNil(t, err)
-	assert.Equal(t, "Password: is a required field", err.Error())
+		// Assertions
+		assert.NotNil(t, err)
+		assert.Equal(t, "Password: is a required field", err.Error())
+	})
 
-	// Test case 2: detect invalid format
-	payload = DummyPayload{
-		Email:    "this.is-not_an.email",
-		Password: "password876@",
-	}
-	err = Validator.ValidatePayloads(payload)
+	t.Run("Test 2 | Detect invalid format", func(t *testing.T) {
+		payload := DummyPayload{
+			Email:    "this.is-not_an.email",
+			Password: "password876@",
+		}
+		err := Validator.ValidatePayloads(payload)
 
-	// Assertions
-	assert.NotNil(t, err)
-	assert.Equal(t, "Email: is not a valid email address", err.Error())
+		// Assertions
+		assert.NotNil(t, err)
+		assert.Equal(t, "Email: is not a valid email address", err.Error())
+	})
 
-	// Test case 3: error with params
-	payload = DummyPayload{
-		Email:    "gin@example.com",
-		Password: "short",
-	}
-	err = Validator.ValidatePayloads(payload)
+	t.Run("Test 3 | Error with params", func(t *testing.T) {
+		payload := DummyPayload{
+			Email:    "gin@example.com",
+			Password: "short",
+		}
+		err := Validator.ValidatePayloads(payload)
 
-	// Assertions
-	assert.NotNil(t, err)
-	assert.Equal(t, "Password: must be at least 6 characters long", err.Error())
+		// Assertions
+		assert.NotNil(t, err)
+		assert.Equal(t, "Password: must be at least 6 characters long", err.Error())
+	})
 
-	// Test case 4: validation passed
-	payload = DummyPayload{
-		Email:    "gin@example.com",
-		Password: "Password999!",
-	}
-	err = Validator.ValidatePayloads(payload)
+	t.Run("Test 4 | Validation passed", func(t *testing.T) {
+		payload := DummyPayload{
+			Email:    "gin@example.com",
+			Password: "Password999!",
+		}
+		err := Validator.ValidatePayloads(payload)
 
-	// Assertions
-	assert.Nil(t, err)
+		// Assertions
+		assert.Nil(t, err)
+	})
 }

@@ -11,17 +11,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Test GenerateToken function
 func TestGenerateToken(t *testing.T) {
-	jwtService := jwt.NewJWTService(config.AppConfig.JWTSecret, config.AppConfig.JWTIssuer, config.AppConfig.JWTExpired)
-	token, err := jwtService.GenerateToken("d2bd47f6-892e-417f-8a82-22d6db743f5f", "Admin", "john.doe@example.com")
-	assert.NoError(t, err)
-	assert.NotEmpty(t, token)
+	t.Run("Test 1 | Success generating token", func(t *testing.T) {
+		jwtService := jwt.NewJWTService(config.AppConfig.JWTSecret, config.AppConfig.JWTIssuer, config.AppConfig.JWTExpired)
+		token, err := jwtService.GenerateToken("d2bd47f6-892e-417f-8a82-22d6db743f5f", "Admin", "john.doe@example.com")
+		assert.NoError(t, err)
+		assert.NotEmpty(t, token)
+	})
 }
 
-// Test ParseToken function
 func TestParseToken(t *testing.T) {
-	t.Run("With Valid Token", func(t *testing.T) {
+	t.Run("Test 1 | With valid token", func(t *testing.T) {
 		jwtService := jwt.NewJWTService(config.AppConfig.JWTSecret, config.AppConfig.JWTIssuer, config.AppConfig.JWTExpired)
 		config.AppConfig.JWTExpired = 5
 
@@ -37,7 +37,7 @@ func TestParseToken(t *testing.T) {
 		assert.True(t, claims.StandardClaims.IssuedAt <= time.Now().UTC().Unix())
 	})
 
-	t.Run("With Invalid Token", func(t *testing.T) {
+	t.Run("Test 2 | With invalid token", func(t *testing.T) {
 		jwtService := jwt.NewJWTService(config.AppConfig.JWTSecret, config.AppConfig.JWTIssuer, config.AppConfig.JWTExpired)
 
 		_, err := jwtService.ParseToken("invalid_token")

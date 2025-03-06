@@ -1,21 +1,19 @@
 package helpers_test
 
 import (
-	"fmt"
 	"testing"
 
 	"gin-framework-boilerplate/pkg/helpers"
 )
 
-// Test GenerateHash function
 func TestGenerateHash(t *testing.T) {
 	tests := []struct {
 		name        string
 		input       string
 		expectedErr bool
 	}{
-		{"Success", "secret", false},
-		{"Error", "", true},
+		{"Success generating hash", "secret", false},
+		{"Error generating hash", "", true},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -32,7 +30,6 @@ func TestGenerateHash(t *testing.T) {
 	}
 }
 
-// Test ValidateHash function
 func TestValidateHash(t *testing.T) {
 	secret := "secret"
 	poorHash := "poor"
@@ -46,12 +43,12 @@ func TestValidateHash(t *testing.T) {
 		hash    string
 		isValid bool
 	}{
-		{"Success", secret, hash, true},
-		{"Invalid", secret, hash[:len(hash)-len(poorHash)] + poorHash, false},
-		{"Invalid", "invalid", "wrong", false},
+		{"Test 1 | Validating process succeeds", secret, hash, true},
+		{"Test 2 | Poor hash", secret, hash[:len(hash)-len(poorHash)] + poorHash, false},
+		{"Test 3 | Invalid hash", "invalid", "wrong", false},
 	}
-	for index, test := range tests {
-		t.Run(fmt.Sprintf("Test %d | %s", index, test.name), func(t *testing.T) {
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
 			if got := helpers.ValidateHash(test.secret, test.hash); got != test.isValid {
 				t.Errorf("ValidateHash(%q, %q) = %v, expected %v", test.secret, test.hash, got, test.isValid)
 			}

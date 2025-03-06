@@ -14,7 +14,6 @@ import (
 // Initialize temp variable to store correlation ID
 var correlationId any
 
-// Test CorrelationIdMiddleware functionality
 func TestCorrelationIdMiddleware(t *testing.T) {
 	// Initialize some variables
 	router := gin.New()

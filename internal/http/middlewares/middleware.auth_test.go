@@ -51,7 +51,6 @@ func getBasicToken() (string, error) {
 	return generateToken()
 }
 
-// Test AuthMiddleware functionality
 func TestAuthMiddleware(t *testing.T) {
 	setup()
 

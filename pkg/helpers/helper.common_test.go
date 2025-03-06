@@ -10,89 +10,93 @@ import (
 
 // Test IsArrayContains function
 func TestIsArrayContains(t *testing.T) {
-	// Test case 1
 	arr := []string{"hello", "world", "golang"}
-	str := "golang"
-	expected := true
-	result := helpers.IsArrayContains(arr, str)
-
-	// Assertions
-	assert.Equal(t, expected, result)
-
-	// Test case 2
-	arr = []string{"hello", "world", "golang"}
-	str = "java"
-	expected = false
-	result = helpers.IsArrayContains(arr, str)
-
-	// Assertions
-	assert.Equal(t, expected, result)
-}
-
-// Test GenerateRandomString function
-func TestGenerateRandomString(t *testing.T) {
-	// Test case 1
-	result, err := helpers.GenerateRandomString(48)
-
-	// Assertions
-	assert.Len(t, result, 48)
-	assert.Nil(t, err)
-}
-
-// Test RemoveEmptyField function
-func TestRemoveEmptyField(t *testing.T) {
-	// Define sample data
-	sampleData := map[string]string{
-		"first_name": "John",
-		"last_name":  "",
-		"gender":     "1",
-		"dob":        "2000-09-08",
+	tests := []struct {
+		name     string
+		str      string
+		expected bool
+	}{
+		{"Test 1 | Contains given element", "golang", true},
+		{"Test 2 | Doesn't contain given element", "python", false},
 	}
 
-	// Call the function
-	formatted := helpers.RemoveEmptyField(sampleData)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			result := helpers.IsArrayContains(arr, test.str)
 
-	// Assertions
-	assert.Equal(t, map[string]string{
-		"first_name": "John",
-		"gender":     "1",
-		"dob":        "2000-09-08",
-	}, formatted)
+			// Assertions
+			assert.Equal(t, test.expected, result)
+		})
+	}
 }
 
-// Test GenerateUUID function
+func TestGenerateRandomString(t *testing.T) {
+	t.Run("Test 1 | Success generating random string", func(t *testing.T) {
+		result, err := helpers.GenerateRandomString(48)
+
+		// Assertions
+		assert.Len(t, result, 48)
+		assert.Nil(t, err)
+	})
+}
+
+func TestRemoveEmptyField(t *testing.T) {
+	t.Run("Test 1 | Success removing empty field", func(t *testing.T) {
+		// Define sample data
+		sampleData := map[string]string{
+			"first_name": "John",
+			"last_name":  "",
+			"gender":     "1",
+			"dob":        "2000-09-08",
+		}
+
+		// Call the function
+		formatted := helpers.RemoveEmptyField(sampleData)
+
+		// Assertions
+		assert.Equal(t, map[string]string{
+			"first_name": "John",
+			"gender":     "1",
+			"dob":        "2000-09-08",
+		}, formatted)
+	})
+}
+
 func TestGenerateUUID(t *testing.T) {
-	// Call the function
-	uuid, err := helpers.GenerateUUID()
+	t.Run("Test 1 | Success generating UUID", func(t *testing.T) {
+		// Call the function
+		uuid, err := helpers.GenerateUUID()
 
-	// Assertions
-	assert.Nil(t, err)
-	assert.NotEqual(t, "", uuid)
+		// Assertions
+		assert.Nil(t, err)
+		assert.NotEqual(t, "", uuid)
+	})
 }
 
-// Test ExtractNullableString function
 func TestExtractNullableString(t *testing.T) {
-	// Test case 1
-	var nilStr *string = nil
-	extracted := helpers.ExtractNullableString(nilStr)
+	t.Run("Test 1 | Nil string", func(t *testing.T) {
+		var nilStr *string = nil
+		extracted := helpers.ExtractNullableString(nilStr)
 
-	// Assertions
-	assert.Equal(t, "", extracted)
+		// Assertion
+		assert.Equal(t, "", extracted)
+	})
 
-	// Test case 1
-	notNilStr := "This is a string"
-	extracted = helpers.ExtractNullableString(&notNilStr)
+	t.Run("Test 2 | Not a nil string", func(t *testing.T) {
+		notNilStr := "This is a string"
+		extracted := helpers.ExtractNullableString(&notNilStr)
 
-	// Assertions
-	assert.Equal(t, notNilStr, extracted)
+		// Assertion
+		assert.Equal(t, notNilStr, extracted)
+	})
 }
 
-// Test CreatePointerString function
 func TestCreatePointerString(t *testing.T) {
-	// Test case 1
-	convertedStr := helpers.CreatePointerString("manual string")
-	pointerStr := "pointer string"
+	t.Run("Test 1 | Success creating a pointer string", func(t *testing.T) {
+		convertedStr := helpers.CreatePointerString("manual string")
+		pointerStr := "pointer string"
 
-	// Assertions
-	assert.IsType(t, &pointerStr, convertedStr)
+		// Assertion
+		assert.IsType(t, &pointerStr, convertedStr)
+	})
 }

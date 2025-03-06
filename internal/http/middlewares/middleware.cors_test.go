@@ -1,7 +1,6 @@
 package middlewares_test
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -14,13 +13,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Test CORSMiddleware functionality
 func TestCORSMiddleware(t *testing.T) {
 	router := gin.New()
 	router.Use(middlewares.CORSMiddleware())
 
 	router.GET("/cors", func(c *gin.Context) {
-		fmt.Println("This is header", c.Request.Header)
 		c.String(http.StatusOK, "Ok!")
 	})
 

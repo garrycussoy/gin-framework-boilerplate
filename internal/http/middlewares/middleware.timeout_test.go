@@ -13,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Test TimeoutMiddleware functionality
 func TestTimeoutMiddleware(t *testing.T) {
 	// Load env variable
 	config.InitializeAppConfig(true)
