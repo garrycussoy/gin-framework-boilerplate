@@ -23,7 +23,6 @@ func generalTestSetup() {
 	s = gin.Default()
 }
 
-// Test HealthCheck function
 func TestHealthCheck(t *testing.T) {
 	generalTestSetup()
 
