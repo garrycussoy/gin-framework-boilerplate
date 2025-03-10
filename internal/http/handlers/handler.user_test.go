@@ -1,7 +1,6 @@
 package handlers_test
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -11,9 +10,9 @@ import (
 
 	Domains "gin-framework-boilerplate/internal/business/domains"
 	Usecases "gin-framework-boilerplate/internal/business/usecases"
-	Requests "gin-framework-boilerplate/internal/http/datatransfers/requests"
 	Handlers "gin-framework-boilerplate/internal/http/handlers"
 	"gin-framework-boilerplate/internal/mocks"
+	ESBPorts "gin-framework-boilerplate/internal/ports/clients/esb"
 	Records "gin-framework-boilerplate/internal/ports/repository/records"
 	"gin-framework-boilerplate/pkg/helpers"
 
@@ -23,16 +22,17 @@ import (
 )
 
 var (
-	authUsecase Domains.AuthUsecase
-	authHandler Handlers.AuthHandler
+	userUsecase Domains.UserUsecase
+	userHandler Handlers.UserHandler
 )
 
-func authTestSetup(t *testing.T) {
+func userTestSetup(t *testing.T) {
 	// Define some services
-	jwtServiceMock = mocks.NewJWTService(t)
 	userRepoMock = mocks.NewUserRepository(t)
-	authUsecase = Usecases.NewAuthUsecase(jwtServiceMock, userRepoMock)
-	authHandler = Handlers.NewAuthHandler(authUsecase)
+	esbClientMock = mocks.NewESBClient(t)
+	jwtServiceMock = mocks.NewJWTService(t)
+	userUsecase = Usecases.NewUserUsecase(userRepoMock, esbClientMock)
+	userHandler = Handlers.NewUserHandler(userUsecase)
 
 	// Define some variables
 	userRecord1 = Records.User{
@@ -45,30 +45,33 @@ func authTestSetup(t *testing.T) {
 		CreatedAt:   time.Now(),
 	}
 
+	userRecordList1 = []Records.User{
+		userRecord1,
+	}
+
+	esbGeneralResponseDto = ESBPorts.GeneralResponseDTO{
+		Message: "Success",
+		Code:    "200",
+		Data:    nil,
+	}
+
 	// Create gin engine
 	s = gin.Default()
 }
 
-func TestUserLogin(t *testing.T) {
-	authTestSetup(t)
+func TestGetUserByEmail(t *testing.T) {
+	userTestSetup(t)
 
 	// Define route
-	s.POST("/login", authHandler.UserLogin)
+	s.GET("/user/:email", userHandler.GetUserByEmail)
 	t.Run("Test 1 | Success", func(t *testing.T) {
 		// Mocking some functions
+		esbClientMock.Mock.On("Sample", mock.Anything).Return(esbGeneralResponseDto, nil).Once()
 		userRepoMock.Mock.On("GetUserByEmail", mock.Anything, mock.AnythingOfType("string")).Return(userRecord1, nil).Once()
-		jwtServiceMock.Mock.On("GenerateToken", mock.AnythingOfType("string"), mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return("token", nil).Once()
-
-		// Prepare payload
-		req := Requests.UserLoginRequest{
-			Email:    "gin@example.com",
-			Password: "Password365!",
-		}
-		reqBody, _ := json.Marshal(req)
 
 		// Do some setup
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodPost, "/login", bytes.NewReader(reqBody))
+		r := httptest.NewRequest(http.MethodGet, "/user/gin@example.com", nil)
 		r.Header.Set("Content-Type", "application/json")
 
 		// Perform request
@@ -85,18 +88,12 @@ func TestUserLogin(t *testing.T) {
 
 	t.Run("Test 2 | Usecase failed (email isn't registered)", func(t *testing.T) {
 		// Mocking some functions
+		esbClientMock.Mock.On("Sample", mock.Anything).Return(esbGeneralResponseDto, nil).Once()
 		userRepoMock.Mock.On("GetUserByEmail", mock.Anything, mock.AnythingOfType("string")).Return(Records.User{}, errors.New("sql: no rows in result set")).Once()
 
-		// Prepare payload
-		req := Requests.UserLoginRequest{
-			Email:    "echo@example.com",
-			Password: "Password365!",
-		}
-		reqBody, _ := json.Marshal(req)
-
 		// Do some setup
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodPost, "/login", bytes.NewReader(reqBody))
+		r := httptest.NewRequest(http.MethodGet, "/user/python@example.com", nil)
 		r.Header.Set("Content-Type", "application/json")
 
 		// Perform request
@@ -108,19 +105,13 @@ func TestUserLogin(t *testing.T) {
 		// Assertions
 		assert.Equal(t, http.StatusBadRequest, w.Result().StatusCode)
 		assert.Contains(t, w.Result().Header.Get("Content-Type"), "application/json")
-		assert.Contains(t, body.Message, "Auth domain error")
+		assert.Contains(t, body.Message, "User domain error")
 	})
 
-	t.Run("Test 3 | Validation failed (missing required field)", func(t *testing.T) {
-		// Prepare payload
-		req := Requests.UserLoginRequest{
-			Email: "gin@example.com",
-		}
-		reqBody, _ := json.Marshal(req)
-
+	t.Run("Test 3 | Validation failed (invalid email format)", func(t *testing.T) {
 		// Do some setup
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodPost, "/login", bytes.NewReader(reqBody))
+		r := httptest.NewRequest(http.MethodGet, "/user/gin", nil)
 		r.Header.Set("Content-Type", "application/json")
 
 		// Perform request
@@ -134,15 +125,20 @@ func TestUserLogin(t *testing.T) {
 		assert.Contains(t, w.Result().Header.Get("Content-Type"), "application/json")
 		assert.Contains(t, body.Message, "Payload validation failed")
 	})
+}
 
-	t.Run("Test 4 | Binding error", func(t *testing.T) {
-		// Prepare payload
-		req := "invalid-payload"
-		reqBody, _ := json.Marshal(req)
+func TestGetUser(t *testing.T) {
+	userTestSetup(t)
+
+	// Define route
+	s.GET("/users", userHandler.GetUsers)
+	t.Run("Test 1 | Success", func(t *testing.T) {
+		// Mocking some functions
+		userRepoMock.Mock.On("GetUsers", mock.Anything, mock.AnythingOfType("UserFilterDto")).Return(userRecordList1, nil).Once()
 
 		// Do some setup
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest(http.MethodPost, "/login", bytes.NewReader(reqBody))
+		r := httptest.NewRequest(http.MethodGet, "/users?branch_id=1&start=2000-01-01&end=2020-01-01", nil)
 		r.Header.Set("Content-Type", "application/json")
 
 		// Perform request
@@ -152,8 +148,29 @@ func TestUserLogin(t *testing.T) {
 		json.Unmarshal(w.Body.Bytes(), &body)
 
 		// Assertions
-		assert.Equal(t, http.StatusBadRequest, w.Result().StatusCode)
+		assert.Equal(t, http.StatusOK, w.Result().StatusCode)
 		assert.Contains(t, w.Result().Header.Get("Content-Type"), "application/json")
-		assert.Contains(t, body.Message, "Payload validation failed")
+		assert.Contains(t, body.Message, "Success")
+	})
+
+	t.Run("Test 2 | Usecase failed (something's wrong happened)", func(t *testing.T) {
+		// Mocking some functions
+		userRepoMock.Mock.On("GetUsers", mock.Anything, mock.AnythingOfType("UserFilterDto")).Return([]Records.User{}, errors.New("sql: expected 8 arguments, got 0")).Once()
+
+		// Do some setup
+		w := httptest.NewRecorder()
+		r := httptest.NewRequest(http.MethodGet, "/users?branch_id=1&start=2000-01-01&end=2020-01-01", nil)
+		r.Header.Set("Content-Type", "application/json")
+
+		// Perform request
+		s.ServeHTTP(w, r)
+
+		var body Handlers.BaseResponse
+		json.Unmarshal(w.Body.Bytes(), &body)
+
+		// Assertions
+		assert.Equal(t, http.StatusInternalServerError, w.Result().StatusCode)
+		assert.Contains(t, w.Result().Header.Get("Content-Type"), "application/json")
+		assert.Contains(t, body.Message, "User repository error")
 	})
 }

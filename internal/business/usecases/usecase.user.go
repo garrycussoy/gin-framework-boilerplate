@@ -48,7 +48,7 @@ func (userUC *userUsecase) GetUserByEmail(ctx context.Context, inDom *Domains.Us
 	// Get user by email
 	user, err := userUC.userRepo.GetUserByEmail(ctx, inDom.Email)
 	if err != nil {
-		return resp, Errors.AuthDomainError(400, "Email is not registered")
+		return resp, Errors.UserDomainError(400, "Email is not registered")
 	}
 	resp = Domains.FromUserToUserDomain(user)
 

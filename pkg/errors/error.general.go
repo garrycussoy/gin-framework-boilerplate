@@ -17,13 +17,15 @@ func TimeoutLimitExceeded() CustomError {
 }
 
 // ===== Domain-related error =====
-// Auth domain
 func AuthDomainError(statusCode int, detail string) CustomError {
 	return CreateCustomError(statusCode, "0101", "Auth domain error", detail)
 }
 
+func UserDomainError(statusCode int, detail string) CustomError {
+	return CreateCustomError(statusCode, "0102", "User domain error", detail)
+}
+
 // ===== Repository-related error =====
-// User repository
 func UserRepositoryError(statusCode int, detail string) CustomError {
 	return CreateCustomError(statusCode, "0201", "User repository error", detail)
 }
