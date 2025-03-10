@@ -21,8 +21,6 @@ import (
 	"gin-framework-boilerplate/pkg/jwt"
 	"gin-framework-boilerplate/pkg/logger"
 
-	// "gin-framework-boilerplate/pkg/notifications"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-resty/resty/v2"
 	"github.com/sirupsen/logrus"
@@ -58,9 +56,6 @@ func NewApp() (*App, error) {
 
 	// JWT service
 	jwtService := jwt.NewJWTService(config.AppConfig.JWTSecret, config.AppConfig.JWTIssuer, config.AppConfig.JWTExpired)
-
-	// Notification service
-	// emailNotificationService := notifications.NewSendEmailNotificationService(config.AppConfig.EmailSender, config.AppConfig.EmailPassword)
 
 	// Initialize auth middleware
 	authMiddleware := middlewares.NewAuthMiddleware(jwtService)
